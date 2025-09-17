@@ -17,45 +17,48 @@ let g:loaded_readline = 1
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 " delete back to start of word
-cnoremap <expr> <Esc><BS> <SID>rubout_word()
+cnoremap <expr> <M-BS> <SID>rubout_word()
+cnoremap <expr> <M-C-h> <SID>rubout_word()
 
 " move back to start of word
-cnoremap <expr> <Esc>b <SID>back_word()
+cnoremap <expr> <M-b> <SID>back_word()
 
 " make word capitalized
-cnoremap <expr> <Esc>c <SID>capitalize_word()
-cnoremap <expr> <Esc>C <SID>capitalize_word()
+cnoremap <expr> <M-c> <SID>capitalize_word()
 
 " delete forward to end of word
-cnoremap <expr> <Esc>d <SID>delete_word()
+cnoremap <expr> <M-d> <SID>delete_word()
 
 " move forward to end of word
-cnoremap <expr> <Esc>f <SID>forward_word()
+cnoremap <expr> <M-f> <SID>forward_word()
 
 " make word lowercase
-cnoremap <expr> <Esc>l <SID>downcase_word()
-cnoremap <expr> <Esc>L <SID>downcase_word()
+cnoremap <expr> <M-l> <SID>downcase_word()
+
+" recall more recent command-line whose beginning matches the current command-line
+cnoremap <M-n> <Down>
+
+" recall older command-line whose beginning matches the current command-line
+cnoremap <M-p> <Up>
 
 " transpose words before cursor
-cnoremap <expr> <Esc>t <SID>transpose_words()
-cnoremap <expr> <Esc>T <SID>transpose_words()
+cnoremap <expr> <M-t> <SID>transpose_words()
 
 " make word uppercase
-cnoremap <expr> <Esc>u <SID>upcase_word()
-cnoremap <expr> <Esc>U <SID>upcase_word()
+cnoremap <expr> <M-u> <SID>upcase_word()
 
 " comment out line and execute it
-cnoremap <Esc># <C-B>"<CR>
+cnoremap <M-#> <C-B>"<CR>
 
 " list all completion matches
-cnoremap <Esc>? <C-D>
-cnoremap <Esc>= <C-D>
+cnoremap <M-?> <C-D>
+cnoremap <M-=> <C-D>
 
 " insert all completion matches
-cnoremap <Esc>* <C-A>
+cnoremap <M-*> <C-A>
 
 " insert last word from last command
-cnoremap <expr> <Esc>. <SID>last_cmd_word()
+cnoremap <expr> <M-.> <SID>last_cmd_word()
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " CTRL mappings
@@ -82,21 +85,11 @@ cnoremap <C-E> <End>
 inoremap <C-F> <Right>
 cnoremap <expr> <C-F> getcmdpos()>strlen(getcmdline())?&cedit:"\<Right>"
 
-" delete back to start of word
-cnoremap <expr> <esc><bs> <sid>rubout_word()
-
 "" delete to start of line
 cnoremap <expr> <C-U> <SID>rubout_line()
 
-function! s:ctrl_u()
-  let pos = col('.')
-  if pos > g:cur_col
-    let @- = getline('.')[g:cur_col-1:pos-2]
-  endif
-  return "\<C-U>"
-endfunction
-
-inoremap <expr> <C-U> <SID>ctrl_u()
+" delete back to start of space delimited word
+cnoremap <expr> <c-w> <SID>rubout_longword()
 
 " delete to end of line
 if get(g:, 'readline_ctrl_k', 1)
@@ -111,50 +104,6 @@ cnoremap <expr> <C-Y> <SID>yank()
 
 " open cmdline-window
 cnoremap <c-x><c-e> <c-f>
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" mapping options
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-" escape mappings
-if get(g:, 'readline_esc', 0) || v:version <= 703
-  cnoremap <Esc> <NOP>
-else
-  " emulate escape unless it was pressed using a modifier
-  function! s:esc()
-    if getchar(0)
-      return ''
-    endif
-    return &cpoptions =~# 'x' ? '\<CR>' : '\<C-C>'
-  endfunction
-  cnoremap <nowait> <expr> <Esc> <SID>esc()
-endif
-
-" meta key mappings
-if get(g:, 'readline_meta', 0) || has('nvim')
-  cmap <M-B> <Esc>b
-  cmap <M-B> <Esc>B
-  cmap <M-F> <Esc>f
-  cmap <M-F> <Esc>F
-  cmap <M-BS> <Esc><BS>
-  cmap <M-D> <Esc>d
-  cmap <M-D> <Esc>D
-  cmap <M-T> <Esc>t
-  cmap <M-T> <Esc>T
-  cmap <M-U> <Esc>u
-  cmap <M-U> <Esc>U
-  cmap <M-L> <Esc>l
-  cmap <M-L> <Esc>L
-  cmap <M-C> <Esc>c
-  cmap <M-C> <Esc>C
-  cmap <M-#> <Esc>#
-  cmap <M-?> <Esc>?
-  cmap <M-=> <Esc>=
-  cmap <M-*> <Esc>*
-  cmap <M-.> <Esc>.
-  cmap <M-N> <Down>
-  cmap <M-P> <Up>
-endif
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " internal variables
@@ -230,7 +179,7 @@ endfunction
 
 " get mapping to make word capitalized
 function! s:capitalize_word()
-  let cmd = ""
+  let cmd = ''
   let s = getcmdline()
   let x = s:getcur()
   let y = s:next_word(x)
@@ -373,28 +322,14 @@ function! s:getcur()
   return s:strlen((getcmdline() . ' ')[:getcmdpos() - 1]) - 1
 endfunction
 
-" for compatibility with earlier versions without strchars
-if exists('*strchars')
-  function! s:strlen(s)
-    if v:version >= 800
-      return strchars(a:s, 1)
-    else
-      return strchars(a:s)
-    endif
-  endfunction
-else
-  function! s:strlen(s)
-    return strlen(a:s)
-  endfunction
-endif
+function! s:strlen(s)
+ if v:version >= 799
+    return strchars(a:s, 1)
+  else
+    return strchars(a:s)
+  endif
+endfunction
 
-" for compatibility with earlier versions without strcharpart
-if exists('*strcharpart')
-  function! s:strpart(s, n, m)
-    return strcharpart(a:s, a:n, a:m)
-  endfunction
-else
-  function! s:strpart(s, n, m)
-    return strpart(a:s, a:n, a:m)
-  endfunction
-endif
+function! s:strpart(s, n, m)
+  return strcharpart(a:s, a:n, a:m)
+endfunction

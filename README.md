@@ -7,9 +7,11 @@ ships with a default set of key-bindings that you are probably already familiar
 with.  The Readline default bindings is a mixture of traditional Unix and Emacs
 bindings.
 
-This plugins implements a subset of Readline's default keyboard commands to
-Vim's command-line mode.  Mappings available include deletion and navigation by
-words and other useful stuff.
+This plugin implements a subset of Readline's default keyboard commands to
+Vim's command-line mode and a yet smaller subset to the insert mode.
+
+See [the documentation](./doc/readline.txt) for documentation of all mappings
+implemented by this plugin.
 
 Features
 --------
@@ -59,9 +61,3 @@ Adding `!` to `:edit` command.
 | `:_edit path/to/file`  | M-f     |
 | `:edit_ path/to/file`  | !       |
 | `:edit!_ path/to/file` |         |
-
-More documentation
-------------------
-
-See [the documentation](./doc/readline.txt) for documentation of all mappings
-implemented by this plugin.

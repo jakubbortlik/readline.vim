@@ -26,29 +26,29 @@ MAPPINGS					*readline-mappings*
 INSERT AND COMMAND-LINE MODE MAPPINGS		*readline-both-modes*
 
 						*readline-CTRL-A*
-<C-A>			Move cursor to beginning of line.  In command-line
+<C-a>			Move cursor to beginning of line.  In command-line
 			mode use <M-*> to access the overridden default
 			mapping.
 
                                                 *readline-CTRL-X_CTRL-A*
-<C-X><C-A>		Access Vim's built-in |i_CTRL-A| or |c_CTRL-A|.
+<C-x><C-a>		Access Vim's built-in |i_CTRL-A| or |c_CTRL-A|.
 
 						*readline-CTRL-B*
-<C-B>			Move cursor left one character.
+<C-b>			Move cursor left one character.
 
 						*readline-CTRL-D*
-<C-D>			Delete character in front of cursor.  Falls back to
+<C-d>			Delete character in front of cursor.  Falls back to
 			|i_CTRL-D| or |c_CTRL-D| at the end of the line.  In
 			command-line mode use <M-?> to access the overridden
 			default mapping.
 
 						*readline-CTRL-E*
-<C-E>			Move cursor to end of line. Falls back to |i_CTRL-E| if
+<C-e>			Move cursor to end of line. Falls back to |i_CTRL-E| if
 			already at the end of the line.  (|c_CTRL-E| already
 			goes to end of line, so it is not mapped.)
 
 						*readline-CTRL-F*
-<C-F>			Move cursor right.  Falls back to |i_CTRL-F| or |c_CTRL-F|
+<C-f>			Move cursor right.  Falls back to |i_CTRL-F| or |c_CTRL-F|
 			at the end of the line. See also
 			|readline-c_CTRL-X_CTRL-E|.
 
@@ -56,64 +56,65 @@ INSERT AND COMMAND-LINE MODE MAPPINGS		*readline-both-modes*
 COMMAND-LINE MODE MAPPINGS			*readline-both-modes*
 
 						*readline-c_CTRL-K*
-<C-K>			Delete to end of line.  Use `let g:readline_ctrl_k =
+<C-k>			Delete to end of line.  Use `let g:readline_ctrl_k =
 			0` in your config to disable this mapping and preserve
 			the default |c_CTRL-K| mapping.
 
 						*readline-c_CTRL-T*
-<C-T>			Transpose characters before the cursor.  Use `let
+<C-t>			Transpose characters before the cursor.  Use `let
 			g:readline_ctrl_t = 0` in your config to disable this
 			mapping even in command-line mode and preserve the
 			default |c_CTRL-T| mapping when 'incsearch' is active.
 
 						*readline-c_CTRL-U*
-<C-U>			Delete to beginning of line and save deleted text to
+<C-u>			Delete to beginning of line and save deleted text to
 			the small delete register.
 
 						*readline-c_CTRL-X_CTRL-E*
-<C-X><C-E>		Open command-line window. See |cmdline| for more
+<C-x><C-e>		Open command-line window. See |cmdline| for more
 			information.  Replacement for the default |c_CTRL-F|
 			mapping which gets overridden when not at the end of
 			the line.
 
 						*readline-c_CTRL-Y*
-<C-Y>			Yank (paste) previously deleted text.  Only text
+<C-y>			Yank (paste) previously deleted text.  Only text
 			deleted through commands which operate on words or
 			lines can be recalled.
 
-						*readline-c_META-BS*
+						*readline-c_META-CTRL-H
+<M-C-h>						*readline-c_META-BS*
 <M-BS>			Delete back to start of previous word.  Word is
 			delimited by non-alphanumeric characters.
 
 						*readline-c_META-B*
-<M-B>			Move cursor back to start of word.  Word is delimited
+<M-b>			Move cursor back to start of word.  Word is delimited
 			by non-alphanumeric characters.
 
 						*readline-c_META-C*
-<M-C>			Make word in front of cursor Capitalized.
+<M-c>			Make word in front of cursor Capitalized.
 
 						*readline-c_META-D*
-<M-D>			Delete forward to end of word.  Word is delimited by
+<M-d>			Delete forward to end of word.  Word is delimited by
 			non-alphanumeric characters.
 
 						*readline-c_META-F*
-<M-F>			Move cursor forward to end of word.  Word is delimited
+<M-f>			Move cursor forward to end of word.  Word is delimited
 			by non-alphanumeric characters.
 
 						*readline-c_META-L*
-<M-L>			Make word in front of cursor lowercase.
+<M-l>			Make word in front of cursor lowercase.
 
 						*readline-c_META-N*
-<M-N>			Equivalent to |c_<Down>| or |i_<Down>|.
+<M-n>			Equivalent to |c_<Down>| or |i_<Down>|.
 
 						*readline-c_META-P*
-<M-P>			Equivalent to |c_<Up>| or |i_<Up>|.
+<M-p>			Equivalent to |c_<Up>| or |i_<Up>|.
 
 						*readline-c_META-T*
-<M-T>			Transpose words before the cursor.
+<M-t>			Transpose words before the cursor.
 
 						*readline-c_META-U*
-<M-U>			Make word in front of cursor UPPERCASE.
+<M-u>			Make word in front of cursor UPPERCASE.
 
 						*readline-c_META-#*
 <M-#>			Comment out the current command line and execute it.
@@ -138,25 +139,7 @@ COMMAND-LINE MODE MAPPINGS			*readline-both-modes*
 ==============================================================================
 META KEY					*readline-meta*
 
-This plugin uses <Esc> for META mappings.  This means that in order to trigger
-the <M-Key> mapping, the input <Esc><Key> should be received.  The reason for
-this is that Vim cannot distinguish some accented characters like ä from
-META-keycodes.  Most terminal emulators can be configured to send <Esc><Key>
-when <Key> is pressed and the ALT modifier is held.  This is highly
-recommended for the plugin to work properly.
-
-In some situations (like in the graphical Vim GUI) that is not possible.  If
-you want to access the mappings using the ALT or META modifier in these
-situations, you can enable it by using `let g:readline_meta = 1` in your
-vimrc.  This might interfere with your ability to insert characters like ä on
-the command-line.
-
-By default it is not possible to trigger mappings by pressing <Esc> followed
-by another key sequentially.  This is because all the keys in the mapping have
-to be received simultaneously.  If you want to be able to trigger mappings by
-pressing <Esc> manually, you can enable it by using `let g:readline_esc = 1`
-in your vimrc.  When this is enabled it is no longer possible to quit the
-command-line using <Esc>.
+As opposed to the original plugin, this fork uses <M-> for META mappings.
 
 ==============================================================================
 INSERT MODE					*readline-insert*

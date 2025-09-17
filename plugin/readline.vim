@@ -1,8 +1,9 @@
 " ============================================================================
 " File:         plugin/readline.vim
 " Description:  Readline-style mappings for command-line mode
-" Author:       Elias Astrom <github.com/ryvnf>
-" Last Change:  2019 December 28
+" Authors:      Elias Astrom <github.com/ryvnf>,
+"               Jakub Bortlik <github.com/jakubbortlik>
+" Last Change:  2025-09-17
 " License:      The VIM LICENSE
 " ============================================================================
 
@@ -12,82 +13,101 @@ endif
 let g:loaded_readline = 1
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" mappings
+" ALT mappings
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-" move to next char
-cnoremap <c-b> <space><bs><left>
-
-" move to previous char
-cnoremap <c-f> <space><bs><right>
+" delete back to start of word
+cnoremap <expr> <Esc><BS> <SID>rubout_word()
 
 " move back to start of word
-cnoremap <expr> <esc>b <sid>back_word()
-cnoremap <expr> <esc>B <sid>back_word()
+cnoremap <expr> <Esc>b <SID>back_word()
+
+" make word capitalized
+cnoremap <expr> <Esc>c <SID>capitalize_word()
+cnoremap <expr> <Esc>C <SID>capitalize_word()
+
+" delete forward to end of word
+cnoremap <expr> <Esc>d <SID>delete_word()
 
 " move forward to end of word
-cnoremap <expr> <esc>f <sid>forward_word()
-cnoremap <expr> <esc>F <sid>forward_word()
+cnoremap <expr> <Esc>f <SID>forward_word()
+
+" make word lowercase
+cnoremap <expr> <Esc>l <SID>downcase_word()
+cnoremap <expr> <Esc>L <SID>downcase_word()
+
+" transpose words before cursor
+cnoremap <expr> <Esc>t <SID>transpose_words()
+cnoremap <expr> <Esc>T <SID>transpose_words()
+
+" make word uppercase
+cnoremap <expr> <Esc>u <SID>upcase_word()
+cnoremap <expr> <Esc>U <SID>upcase_word()
+
+" comment out line and execute it
+cnoremap <Esc># <C-B>"<CR>
+
+" list all completion matches
+cnoremap <Esc>? <C-D>
+cnoremap <Esc>= <C-D>
+
+" insert all completion matches
+cnoremap <Esc>* <C-A>
+
+" insert last word from last command
+cnoremap <expr> <Esc>. <SID>last_cmd_word()
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" CTRL mappings
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 " move to start of line
-cnoremap <c-a> <home>
+inoremap        <C-A> <C-O>^
+inoremap   <C-X><C-A> <C-A>
+cnoremap        <C-A> <Home>
+cnoremap   <C-X><C-A> <C-A>
 
-" move to end of line
-cnoremap <c-e> <end>
+" move to next char
+noremap! <C-B> <Left>
 
 " delete char under cursor
-cnoremap <expr> <c-d> getcmdpos() <= strlen(getcmdline()) ? "\<del>" : ""
+inoremap <expr> <C-D> col('.') <= strlen(getline('.')) ? "\<Del>" : "\<C-d>"
+cnoremap <expr> <C-D> getcmdpos() <= strlen(getcmdline()) ? "\<Del>" : "\<C-d>"
+
+" move to end of line
+inoremap <expr> <C-E> col('.')>strlen(getline('.'))<Bar><Bar>pumvisible()?"\<C-E>":"\<End>"
+cnoremap <C-E> <End>
+
+" move to next char
+inoremap <C-F> <Right>
+cnoremap <expr> <C-F> getcmdpos()>strlen(getcmdline())?&cedit:"\<Right>"
 
 " delete back to start of word
 cnoremap <expr> <esc><bs> <sid>rubout_word()
 
-" delete back to start of space delimited word
-cnoremap <expr> <c-w> <sid>rubout_longword()
+"" delete to start of line
+cnoremap <expr> <C-U> <SID>rubout_line()
 
-" delete forward to end of word
-cnoremap <expr> <esc>d <sid>delete_word()
-cnoremap <expr> <esc>D <sid>delete_word()
+function! s:ctrl_u()
+  let pos = col('.')
+  if pos > g:cur_col
+    let @- = getline('.')[g:cur_col-1:pos-2]
+  endif
+  return "\<C-U>"
+endfunction
 
-" delete to start of line
-cnoremap <expr> <c-u> <sid>rubout_line()
-cnoremap <expr> <c-x><bs> <sid>rubout_line()
+inoremap <expr> <C-U> <SID>ctrl_u()
 
 " delete to end of line
 if get(g:, 'readline_ctrl_k', 1)
-  cnoremap <expr> <c-k> <sid>delete_line()
+  cnoremap <expr> <C-K> <SID>delete_line()
 endif
 
 " transpose characters before cursor
-cnoremap <expr> <c-t> <sid>transpose_chars()
-
-" transpose words before cursor
-cnoremap <expr> <esc>t <sid>transpose_words()
-cnoremap <expr> <esc>T <sid>transpose_words()
+cnoremap <expr> <C-T> <SID>transpose_chars()
 
 " yank (paste) previously deleted text
-cnoremap <expr> <c-y> <sid>yank()
-
-" make word uppercase
-cnoremap <expr> <esc>u <sid>upcase_word()
-cnoremap <expr> <esc>U <sid>upcase_word()
-
-" make word lowercase
-cnoremap <expr> <esc>l <sid>downcase_word()
-cnoremap <expr> <esc>L <sid>downcase_word()
-
-" make word capitalized
-cnoremap <expr> <esc>c <sid>capitalize_word()
-cnoremap <expr> <esc>C <sid>capitalize_word()
-
-" comment out line and execute it
-cnoremap <esc># <c-b>"<cr>
-
-" list all completion matches
-cnoremap <esc>? <c-d>
-cnoremap <esc>= <c-d>
-
-" insert all completion matches
-cnoremap <esc>* <c-a>
+cnoremap <expr> <C-Y> <SID>yank()
 
 " open cmdline-window
 cnoremap <c-x><c-e> <c-f>
@@ -98,39 +118,42 @@ cnoremap <c-x><c-e> <c-f>
 
 " escape mappings
 if get(g:, 'readline_esc', 0) || v:version <= 703
-  cnoremap <esc> <nop>
+  cnoremap <Esc> <NOP>
 else
   " emulate escape unless it was pressed using a modifier
   function! s:esc()
     if getchar(0)
-      return ""
+      return ''
     endif
-    return &cpoptions =~# "x" ? "\<cr>" : "\<c-c>"
+    return &cpoptions =~# 'x' ? '\<CR>' : '\<C-C>'
   endfunction
-  cnoremap <nowait> <expr> <esc> <sid>esc()
+  cnoremap <nowait> <expr> <Esc> <SID>esc()
 endif
 
 " meta key mappings
 if get(g:, 'readline_meta', 0) || has('nvim')
-  cmap <m-b> <esc>b
-  cmap <m-B> <esc>B
-  cmap <m-f> <esc>f
-  cmap <m-F> <esc>F
-  cmap <m-bs> <esc><bs>
-  cmap <m-d> <esc>d
-  cmap <m-D> <esc>D
-  cmap <m-t> <esc>t
-  cmap <m-T> <esc>T
-  cmap <m-u> <esc>u
-  cmap <m-U> <esc>U
-  cmap <m-l> <esc>l
-  cmap <m-L> <esc>L
-  cmap <m-c> <esc>c
-  cmap <m-C> <esc>C
-  cmap <m-#> <esc>#
-  cmap <m-?> <esc>?
-  cmap <m-=> <esc>=
-  cmap <m-*> <esc>*
+  cmap <M-B> <Esc>b
+  cmap <M-B> <Esc>B
+  cmap <M-F> <Esc>f
+  cmap <M-F> <Esc>F
+  cmap <M-BS> <Esc><BS>
+  cmap <M-D> <Esc>d
+  cmap <M-D> <Esc>D
+  cmap <M-T> <Esc>t
+  cmap <M-T> <Esc>T
+  cmap <M-U> <Esc>u
+  cmap <M-U> <Esc>U
+  cmap <M-L> <Esc>l
+  cmap <M-L> <Esc>L
+  cmap <M-C> <Esc>c
+  cmap <M-C> <Esc>C
+  cmap <M-#> <Esc>#
+  cmap <M-?> <Esc>?
+  cmap <M-=> <Esc>=
+  cmap <M-*> <Esc>*
+  cmap <M-.> <Esc>.
+  cmap <M-N> <Down>
+  cmap <M-P> <Up>
 endif
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,16 +216,16 @@ endfunction
 function! s:upcase_word()
   let x = s:getcur()
   let y = s:next_word(x)
-  return repeat("\<del>", y - x) . substitute(toupper(s:strpart(getcmdline(),
-  \ x, y - x)), '[[:cntrl:]]', "\<c-v>&", 'g')
+  return repeat("\<Del>", y - x) . substitute(toupper(s:strpart(getcmdline(),
+  \ x, y - x)), '[[:cntrl:]]', "\<C-V>&", 'g')
 endfunction
 
 " get mapping to make word lowercase
 function! s:downcase_word()
   let x = s:getcur()
   let y = s:next_word(x)
-  return repeat("\<del>", y - x) . substitute(tolower(s:strpart(getcmdline(),
-  \ x, y - x)), '[[:cntrl:]]', "\<c-v>&", 'g')
+  return repeat("\<Del>", y - x) . substitute(tolower(s:strpart(getcmdline(),
+  \ x, y - x)), '[[:cntrl:]]', "\<C-V>&", 'g')
 endfunction
 
 " get mapping to make word capitalized
@@ -215,40 +238,45 @@ function! s:capitalize_word()
     let c = s:strpart(s, x, 1)
     let x += 1
     if c =~# s:wordchars
-      let cmd .= "\<del>" . toupper(s:strpart(s, x - 1, 1))
+      let cmd .= "\<Del>" . toupper(s:strpart(s, x - 1, 1))
       break
     else
-      let cmd .= "\<right>"
+      let cmd .= "\<Right>"
     endif
   endwhile
-  let cmd .= repeat("\<del>", y - x) . substitute(tolower(s:strpart(
-  \ getcmdline(), x, y - x)), '[[:cntrl:]]', "\<c-v>&", 'g')
-  return " \b" . substitute(cmd, '[[:cntrl:]]', "\<c-v>&", 'g')
+  let cmd .= repeat("\<Del>", y - x) . substitute(tolower(s:strpart(
+  \ getcmdline(), x, y - x)), '[[:cntrl:]]', "\<C-V>&", 'g')
+  return " \b" . substitute(cmd, '[[:cntrl:]]', "\<C-V>&", 'g')
+endfunction
+
+function! s:last_cmd_word()
+  let hist = histget(':', -1)
+  return matchstr(hist, '\S\+$')
 endfunction
 
 " get mapping to yank (paste) the previously deleted text
 function! s:yank()
-  return substitute(s:yankbuf, '[[:cntrl:]]', "\<c-v>&", 'g')
+  return substitute(s:yankbuf, '[[:cntrl:]]', "\<C-V>&", 'g')
 endfunction
 
 " get mapping to transpose chars before cursor position
 function! s:transpose_chars()
   if !get(g:, 'readline_ctrl_t', 1) && &incsearch && getcmdtype() =~# '[/?]'
-    return "\<c-t>"
+    return "\<C-T>"
   endif
   let s = getcmdline()
   let n = s:strlen(s)
   let x = s:getcur()
   if n < 2
-    return ""
+    return ''
   endif
-  let cmd = ""
+  let cmd = ''
   if x == n
-    let cmd .= "\<left>"
+    let cmd .= "\<Left>"
     let x -= 1
   endif
-  return " \b" . cmd . "\b\<right>" .
-  \ substitute(s:strpart(s, x - 1, 1), '[[:cntrl:]]', "\<c-v>&", '')
+  return " \b" . cmd . "\b\<Right>" .
+  \ substitute(s:strpart(s, x - 1, 1), '[[:cntrl:]]', "\<C-V>&", '')
 endfunction
 
 " get mapping to transpose words before cursor position
@@ -260,7 +288,7 @@ function! s:transpose_words()
   let beg1 = s:prev_word(beg2)
   let end1 = s:next_word(beg1)
   if beg2 < end1
-    return ""
+    return ''
   endif
   let str1 = s:strpart(s, beg1, end1 - beg1)
   let str2 = s:strpart(s, beg2, end2 - beg2)
@@ -268,7 +296,7 @@ function! s:transpose_words()
   let len2 = s:strlen(str2)
   return " \b" . s:move_to(end2, x) . repeat("\b", len2) . str1 .
   \ s:move_to(end1, beg2 + len1) . repeat("\b", len1) .
-  \ substitute(str2, '[[:cntrl:]]', "\<c-v>&", 'g') .
+  \ substitute(str2, '[[:cntrl:]]', "\<C-V>&", 'g') .
   \ s:move_to(end2, beg1 + len2)
 endfunction
 
@@ -277,9 +305,9 @@ endfunction
 " sync with the real cursor position).
 function! s:move_to(x, y)
   if a:y < a:x
-    return repeat("\<right>", a:x - a:y)
+    return repeat("\<Right>", a:x - a:y)
   endif
-  return repeat("\<left>", a:y - a:x)
+  return repeat("\<Left>", a:y - a:x)
 endfunction
 
 " Get mapping to delete from cursor to position.  Argument x is the position
@@ -287,11 +315,11 @@ endfunction
 " this _must_ be in sync with the real cursor position).
 function! s:delete_to(x, y)
   if a:y == a:x
-    return ""
+    return ''
   endif
   if a:y < a:x
     let s:yankbuf = s:strpart(getcmdline(), a:y, a:x - a:y)
-    return repeat("\<del>", a:x - a:y)
+    return repeat("\<Del>", a:x - a:y)
   endif
   let s:yankbuf = s:strpart(getcmdline(), a:x, a:y - a:x)
   return repeat("\b", a:y - a:x)

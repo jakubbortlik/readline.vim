@@ -22,6 +22,7 @@ cnoremap <expr> <M-C-h> <SID>rubout_word()
 
 " move back to start of word
 cnoremap <expr> <M-b> <SID>back_word()
+inoremap        <M-b> <S-Left>
 
 " make word capitalized
 cnoremap <expr> <M-c> <SID>capitalize_word()
@@ -31,6 +32,7 @@ cnoremap <expr> <M-d> <SID>delete_word()
 
 " move forward to end of word
 cnoremap <expr> <M-f> <SID>forward_word()
+inoremap        <M-f> <S-Right>
 
 " make word lowercase
 cnoremap <expr> <M-l> <SID>downcase_word()

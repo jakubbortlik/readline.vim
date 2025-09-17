@@ -52,6 +52,16 @@ INSERT AND COMMAND-LINE MODE MAPPINGS		*readline-both-modes*
 			at the end of the line. See also
 			|readline-c_CTRL-X_CTRL-E|.
 
+						*readline-c_META-B*
+<M-b>			Move cursor back to start of word.  Word is delimited
+			by non-alphanumeric characters. In insert mode it does
+			<S-Left> (like |b|).
+
+						*readline-c_META-F*
+<M-f>			Move cursor forward to end of word.  Word is delimited
+			by non-alphanumeric characters. In insert mode it does
+			<S-Right> (like |w|).
+
 
 COMMAND-LINE MODE MAPPINGS			*readline-both-modes*
 
@@ -86,20 +96,12 @@ COMMAND-LINE MODE MAPPINGS			*readline-both-modes*
 <M-BS>			Delete back to start of previous word.  Word is
 			delimited by non-alphanumeric characters.
 
-						*readline-c_META-B*
-<M-b>			Move cursor back to start of word.  Word is delimited
-			by non-alphanumeric characters.
-
 						*readline-c_META-C*
 <M-c>			Make word in front of cursor Capitalized.
 
 						*readline-c_META-D*
 <M-d>			Delete forward to end of word.  Word is delimited by
 			non-alphanumeric characters.
-
-						*readline-c_META-F*
-<M-f>			Move cursor forward to end of word.  Word is delimited
-			by non-alphanumeric characters.
 
 						*readline-c_META-L*
 <M-l>			Make word in front of cursor lowercase.

@@ -1,12 +1,12 @@
-*readline.txt*	Readline-style mappings for command-line and insert mode that
+*readline.txt*  Readline-style mappings for command-line and insert mode that
                 try not to overlap with built-in Vim functionality.
 
-Author:		Elias Åstrom <github.com/ryvnf>
-License:	The VIM LICENSE (see |license|).  This plugin is distributed
-		under the same conditions as Vim itself.
+Author:         Elias Åstrom <github.com/ryvnf>
+License:        The VIM LICENSE (see |license|).  This plugin is distributed
+                under the same conditions as Vim itself.
 
 ==============================================================================
-INTRO						*readline*
+INTRO                                           *readline*
 
 This plugin adds a subset of Readline's keybindings to Vim's command-line mode
 and partially also insert mode.
@@ -21,138 +21,138 @@ another mappings (like |readline-c_CTRL-X_CTRL-E|).  For others it is possible
 to set a variable to preserve the default mapping.
 
 ==============================================================================
-MAPPINGS					*readline-mappings*
+MAPPINGS                                        *readline-mappings*
 
-INSERT AND COMMAND-LINE MODE MAPPINGS		*readline-both-modes*
+INSERT AND COMMAND-LINE MODE MAPPINGS           *readline-insert-and-command-line-mode*
 
-						*readline-CTRL-A*
-<C-a>			Move cursor to beginning of line.  In command-line
-			mode use <M-*> to access the overridden default
-			mapping.
+                                                *readline-CTRL-A*
+<C-a>                   Move cursor to beginning of line.  In command-line
+                        mode use <M-*> to access the overridden default
+                        mapping.
 
                                                 *readline-CTRL-X_CTRL-A*
-<C-x><C-a>		Access Vim's built-in |i_CTRL-A| or |c_CTRL-A|.
+<C-x><C-a>              Access Vim's built-in |i_CTRL-A| or |c_CTRL-A|.
 
-						*readline-CTRL-B*
-<C-b>			Move cursor left one character.
+                                                *readline-CTRL-B*
+<C-b>                   Move cursor left one character.
 
-						*readline-CTRL-D*
-<C-d>			Delete character in front of cursor.  Falls back to
-			|i_CTRL-D| or |c_CTRL-D| at the end of the line.  In
-			command-line mode use <M-?> to access the overridden
-			default mapping.
+                                                *readline-CTRL-D*
+<C-d>                   Delete character in front of cursor.  Falls back to
+                        |i_CTRL-D| or |c_CTRL-D| at the end of the line.  In
+                        command-line mode use <M-?> to access the overridden
+                        default mapping.
 
-						*readline-CTRL-E*
-<C-e>			Move cursor to end of line. Falls back to |i_CTRL-E| if
-			already at the end of the line.  (|c_CTRL-E| already
-			goes to end of line, so it is not mapped.)
+                                                *readline-CTRL-E*
+<C-e>                   Move cursor to end of line. Falls back to |i_CTRL-E| if
+                        already at the end of the line.  (|c_CTRL-E| already
+                        goes to end of line, so it is not mapped.)
 
-						*readline-CTRL-F*
-<C-f>			Move cursor right.  Falls back to |i_CTRL-F| or |c_CTRL-F|
-			at the end of the line. See also
-			|readline-c_CTRL-X_CTRL-E|.
+                                                *readline-CTRL-F*
+<C-f>                   Move cursor right.  Falls back to |i_CTRL-F| or |c_CTRL-F|
+                        at the end of the line. See also
+                        |readline-c_CTRL-X_CTRL-E|.
 
-						*readline-c_META-B*
-<M-b>			Move cursor back to start of word.  Word is delimited
-			by non-alphanumeric characters. In insert mode it does
-			<S-Left> (like |b|).
+                                                *readline-c_META-B*
+<M-b>                   Move cursor back to start of word.  Word is delimited
+                        by non-alphanumeric characters. In insert mode it does
+                        <S-Left> (like |b|).
 
-						*readline-c_META-F*
-<M-f>			Move cursor forward to end of word.  Word is delimited
-			by non-alphanumeric characters. In insert mode it does
-			<S-Right> (like |w|).
+                                                *readline-c_META-F*
+<M-f>                   Move cursor forward to end of word.  Word is delimited
+                        by non-alphanumeric characters. In insert mode it does
+                        <S-Right> (like |w|).
 
 
-COMMAND-LINE MODE MAPPINGS			*readline-both-modes*
+COMMAND-LINE MODE MAPPINGS                      *readline-command-line-mode*
 
-						*readline-c_CTRL-K*
-<C-k>			Delete to end of line.  Use `let g:readline_ctrl_k =
-			0` in your config to disable this mapping and preserve
-			the default |c_CTRL-K| mapping.
+                                                *readline-c_CTRL-K*
+<C-k>                   Delete to end of line.  Use `let g:readline_ctrl_k =
+                        0` in your config to disable this mapping and preserve
+                        the default |c_CTRL-K| mapping.
 
-						*readline-c_CTRL-T*
-<C-t>			Transpose characters before the cursor.  Use `let
-			g:readline_ctrl_t = 0` in your config to disable this
-			mapping even in command-line mode and preserve the
-			default |c_CTRL-T| mapping when 'incsearch' is active.
+                                                *readline-c_CTRL-T*
+<C-t>                   Transpose characters before the cursor.  Use `let
+                        g:readline_ctrl_t = 0` in your config to disable this
+                        mapping even in command-line mode and preserve the
+                        default |c_CTRL-T| mapping when 'incsearch' is active.
 
-						*readline-c_CTRL-U*
-<C-u>			Delete to beginning of line and save deleted text to
-			the small delete register.
+                                                *readline-c_CTRL-U*
+<C-u>                   Delete to beginning of line and save deleted text to
+                        the small delete register.
 
-						*readline-c_CTRL-X_CTRL-E*
-<C-x><C-e>		Open command-line window. See |cmdline| for more
-			information.  Replacement for the default |c_CTRL-F|
-			mapping which gets overridden when not at the end of
-			the line.
+                                                *readline-c_CTRL-X_CTRL-E*
+<C-x><C-e>              Open command-line window. See |cmdline| for more
+                        information.  Replacement for the default |c_CTRL-F|
+                        mapping which gets overridden when not at the end of
+                        the line.
 
-						*readline-c_CTRL-Y*
-<C-y>			Yank (paste) previously deleted text.  Only text
-			deleted through commands which operate on words or
-			lines can be recalled.
+                                                *readline-c_CTRL-Y*
+<C-y>                   Yank (paste) previously deleted text.  Only text
+                        deleted through commands which operate on words or
+                        lines can be recalled.
 
-						*readline-c_META-CTRL-H
-<M-C-h>						*readline-c_META-BS*
-<M-BS>			Delete back to start of previous word.  Word is
-			delimited by non-alphanumeric characters.
+                                                *readline-c_META-CTRL-H
+<M-C-h>                                         *readline-c_META-BS*
+<M-BS>                  Delete back to start of previous word.  Word is
+                        delimited by non-alphanumeric characters.
 
-						*readline-c_META-C*
-<M-c>			Make word in front of cursor Capitalized.
+                                                *readline-c_META-C*
+<M-c>                   Make word in front of cursor Capitalized.
 
-						*readline-c_META-D*
-<M-d>			Delete forward to end of word.  Word is delimited by
-			non-alphanumeric characters.
+                                                *readline-c_META-D*
+<M-d>                   Delete forward to end of word.  Word is delimited by
+                        non-alphanumeric characters.
 
-						*readline-c_META-L*
-<M-l>			Make word in front of cursor lowercase.
+                                                *readline-c_META-L*
+<M-l>                   Make word in front of cursor lowercase.
 
-						*readline-c_META-N*
-<M-n>			Equivalent to |c_<Down>| or |i_<Down>|.
+                                                *readline-c_META-N*
+<M-n>                   Equivalent to |c_<Down>| or |i_<Down>|.
 
-						*readline-c_META-P*
-<M-p>			Equivalent to |c_<Up>| or |i_<Up>|.
+                                                *readline-c_META-P*
+<M-p>                   Equivalent to |c_<Up>| or |i_<Up>|.
 
-						*readline-c_META-T*
-<M-t>			Transpose words before the cursor.
+                                                *readline-c_META-T*
+<M-t>                   Transpose words before the cursor.
 
-						*readline-c_META-U*
-<M-u>			Make word in front of cursor UPPERCASE.
+                                                *readline-c_META-U*
+<M-u>                   Make word in front of cursor UPPERCASE.
 
-						*readline-c_META-#*
-<M-#>			Comment out the current command line and execute it.
-			This will put the line in history for later retrival,
-			without running it.
+                                                *readline-c_META-#*
+<M-#>                   Comment out the current command line and execute it.
+                        This will put the line in history for later retrival,
+                        without running it.
 
-						*readline-c_META-=*
-<M-=>		or				*readline-c_META-?*
-<M-?>			Display all names that match pattern in front of
-			cursor.  Replacement for the default |c_CTRL-D|
-			mapping which gets overridden when not at the end of
-			the line.
+                                                *readline-c_META-=*
+<M-=>           or                              *readline-c_META-?*
+<M-?>                   Display all names that match pattern in front of
+                        cursor.  Replacement for the default |c_CTRL-D|
+                        mapping which gets overridden when not at the end of
+                        the line.
 
-						*readline-c_META-star*
-<M-*>			Insert all names that match pattern in front of
-			cursor.  Replacement for the default |c_CTRL-A|
-			mapping which gets overridden.
+                                                *readline-c_META-star*
+<M-*>                   Insert all names that match pattern in front of
+                        cursor.  Replacement for the default |c_CTRL-A|
+                        mapping which gets overridden.
 
-						*readline-c_META-dot*
-<M-.>			Insert the last word of the previous history entry.
+                                                *readline-c_META-dot*
+<M-.>                   Insert the last word of the previous history entry.
 
 ==============================================================================
-META KEY					*readline-meta*
+META KEY                                        *readline-meta*
 
 As opposed to the original plugin, this fork uses <M-> for META mappings.
 
 ==============================================================================
-INSERT MODE					*readline-insert*
+INSERT MODE                                     *readline-insert*
 
 This fork of the plugin adds a subset of the Readline-style commands to insert
 mode based on Tim Pope's vim-rsi plugin.
 
 ==============================================================================
-BUGS						*readline-bugs*
+BUGS                                            *readline-bugs*
 
 If you happen to find a bug, please create an issue at
 <github.com/jakubbortlik/readline.vim>.
 
- vim:tw=78:noet:ts=8:sw=8:ft=help:norl:
+ vim:tw=78:et:ts=8:sw=8:ft=help:norl:
